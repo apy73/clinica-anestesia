@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Práctica de Anestesia Dental</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+        }
+        .container-card {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 24px;
+            background-color: white;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+        }
+        input, select, textarea {
+            border: 1px solid #d1d5db;
+            padding: 10px;
+            border-radius: 6px;
+            width: 100%;
+        }
+        /* Estilo para el canvas de la firma */
+        #signatureCanvas {
+            border: 2px dashed #9ca3af;
+            border-radius: 8px;
+            touch-action: none; /* Crucial para táctil */
+            background-color: #f9f9fb;
+        }
+        .required-label::after {
+            content: ' *';
+            color: #ef4444;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container-card">
+        <h1 class="text-3xl font-bold text-center text-teal-700 mb-6">Registro Clínico de Anestesia</h1>
+        <p class="text-center text-gray-600 mb-8">Complete los campos obligatorios para validar la práctica.</p>
+
+        <form id="anesthesiaForm" class="space-y-4">
+            
+            <!-- Fecha de la Práctica -->
+            <div>
+                <label for="date" class="block text-sm font-medium text-gray-700 required-label">Fecha de la Práctica</label>
+                <input type="date" id="date" name="date" required 
+                       class="mt-1 focus:ring-teal-500 focus:border-teal-500"
+                       value="">
+            </div>
+
+            <!-- Nombre del Alumno -->
+            <div>
+                <label for="studentName" class="block text-sm font-medium text-gray-700 required-label">Nombre del Alumno</label>
+                <input type="text" id="studentName" name="studentName" required placeholder="Nombre Completo"
+                       class="mt-1 focus:ring-teal-500 focus:border-teal-500">
+            </div>
+
+            <!-- Grupo del Alumno -->
+            <div>
+                <label for="studentGroup" class="block text-sm font-medium text-gray-700 required-label">Grupo del Alumno</label>
+                <input type="text" id="studentGroup" name="studentGroup" required placeholder="Ej: 5°A"
+                       class="mt-1 focus:ring-teal-500 focus:border-teal-500">
+            </div>
+
+            <!-- Técnica Anestésica -->
+            <div>
+                <label for="anesthesiaTechnique" class="block text-sm font-medium text-gray-700 required-label">Técnica Anestésica Aplicada</label>
+                <select id="anesthesiaTechnique" name="anesthesiaTechnique" required
+                        class="mt-1 focus:ring-teal-500 focus:border-teal-500">
+                    <option value="">Seleccione una técnica</option>
+                    <option value="Infiltrativa">Infiltrativa</option>
+                    <option value="Troncular">Troncular (Bloqueo)</option>
+                    <option value="Intraligamentaria">Intraligamentaria</option>
+                </select>
+            </div>
+
+            <!-- Anestésico(s) Utilizado(s) -->
+            <div>
+                <label for="anestheticsUsed" class="block text-sm font-medium text-gray-700 required-label">Anestésico(s) Utilizado(s)</label>
+                <input type="text" id="anestheticsUsed" name="anestheticsUsed" required placeholder="Ej: Lidocaína 2% con epinefrina 1:100.000"
+                       class="mt-1 focus:ring-teal-500 focus:border-teal-500">
+            </div>
+
+            <!-- Presión Arterial Antes -->
+            <div>
+                <label for="bpBefore" class="block text-sm font-medium text-gray-700 required-label">Presión Arterial Antes de la Práctica (mmHg)</label>
+                <input type="text" id="bpBefore" name="bpBefore" required placeholder="Ej: 120/80"
+                       class="mt-1 focus:ring-teal-500 focus:border-teal-500">
+            </div>
+
+            <!-- Presión Arterial Después -->
+            <div>
+                <label for="bpAfter" class="block text-sm font-medium text-gray-700 required-label">Presión Arterial Después de la Práctica (mmHg)</label>
+                <input type="text" id="bpAfter" name="bpAfter" required placeholder="Ej: 115/75"
+                       class="mt-1 focus:ring-teal-500 focus:border-teal-500">
+            </div>
+
+            <!-- Comentarios Adicionales -->
+            <div>
+                <label for="comments" class="block text-sm font-medium text-gray-700">Comentarios Adicionales (Opcional)</label>
+                <textarea id="comments" name="comments" rows="3" placeholder="Observaciones sobre la respuesta del paciente o la técnica..."
+                          class="mt-1 focus:ring-teal-500 focus:border-teal-500"></textarea>
+            </div>
+
+            <!-- Firma Digital -->
+            <div class="pt-4">
+                <label class="block text-sm font-medium text-gray-700 required-label">Firma Digital del Odontólogo Docente</label>
+                <div class="border p-2 rounded-lg bg-gray-50">
+                    <canvas id="signatureCanvas" width="550" height="200" class="w-full"></canvas>
+                </div>
+                <button type="button" id="clearSignature" 
+                        class="mt-2 text-xs text-red-600 hover:text-red-800 transition duration-150">
+                    Borrar Firma
+                </button>
+            </div>
+
+            <!-- Mensajes de estado -->
+            <div id="statusMessage" class="mt-4 p-3 rounded-lg text-center font-medium hidden"></div>
+
+            <!-- Botón de Enviar -->
+            <button type="submit" id="submitButton"
+                    class="w-full mt-6 flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-lg font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition duration-150">
+                <svg id="loadingSpinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Registrar y Generar PDF
+            </button>
+        </form>
+
+        <!-- Contenedor para la descarga del PDF -->
+        <div id="pdfDownloadArea" class="mt-6 p-4 border-2 border-green-400 bg-green-50 rounded-lg text-center hidden">
+            <p class="text-green-800 font-semibold mb-2">✅ ¡Registro Guardado y PDF Listo!</p>
+            <a id="downloadLink" href="#" download="registro.pdf"
+               class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 transition duration-150">
+                Descargar Comprobante PDF
+            </a>
+        </div>
+        
+    </div>
+
+    <script>
+        // Configuración de Google Apps Script (Backend)
+        // !!! URL FINAL DE DESPLIEGUE APLICADA !!!
+        const GOOGLE_APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyo2vYrloiu8hkJC61OGTho5ezvknZdjEaLhK6gCp9rP8cqV0sQwuuJTKNeSyU0d6_H/exec";
+
+        // --- Inicialización y Variables ---
+        const form = document.getElementById('anesthesiaForm');
+        const canvas = document.getElementById('signatureCanvas');
+        const clearButton = document.getElementById('clearSignature');
+        const statusMessage = document.getElementById('statusMessage');
+        const submitButton = document.getElementById('submitButton');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const pdfDownloadArea = document.getElementById('pdfDownloadArea');
+        const downloadLink = document.getElementById('downloadLink');
+        const ctx = canvas.getContext('2d');
+        
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+
+        // Auto-rellenar la fecha con el día actual
+        document.getElementById('date').value = new Date().toISOString().split('T')[0];
+
+        // Ajustar el canvas al ancho de su contenedor
+        function resizeCanvas() {
+            const containerWidth = canvas.parentElement.clientWidth - 4; // Ajuste por padding/border
+            canvas.width = containerWidth;
+            // Si hay contenido, redibujar (o limpiar si es la primera vez)
+            if (!isDrawing) {
+                ctx.fillStyle = '#f9f9fb';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas(); // Llamar al inicio
+
+        // Inicializar el canvas con fondo blanco
+        ctx.fillStyle = '#f9f9fb';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        
+        // --- Funciones de Utilidad ---
+
+        function showMessage(message, type = 'info') {
+            statusMessage.textContent = message;
+            statusMessage.classList.remove('hidden', 'bg-red-100', 'text-red-800', 'bg-green-100', 'text-green-800', 'bg-blue-100', 'text-blue-800');
+            
+            if (type === 'error') {
+                statusMessage.classList.add('bg-red-100', 'text-red-800');
+            } else if (type === 'success') {
+                statusMessage.classList.add('bg-green-100', 'text-green-800');
+            } else { // info
+                statusMessage.classList.add('bg-blue-100', 'text-blue-800');
+            }
+        }
+
+        function setSubmitting(isSubmitting) {
+            submitButton.disabled = isSubmitting;
+            submitButton.classList.toggle('opacity-50', isSubmitting);
+            loadingSpinner.classList.toggle('hidden', !isSubmitting);
+            // El texto del botón se gestiona aquí:
+            const buttonText = isSubmitting ? 'Registrando...' : 'Registrar y Generar PDF';
+            // Buscar y actualizar el texto del botón (si no está siendo reemplazado por el spinner)
+            if (submitButton.childNodes.length > 1 && submitButton.childNodes[1].nodeType === Node.TEXT_NODE) {
+                submitButton.childNodes[1].nodeValue = buttonText;
+            } else {
+                 // Si no hay nodo de texto, actualizar el innerHTML.
+                 submitButton.innerHTML = `<svg id="loadingSpinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white ${isSubmitting ? '' : 'hidden'}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>${buttonText}`;
+            }
+            
+            // Asegurarse de que el spinner se maneje correctamente si es un hijo directo
+            document.getElementById('loadingSpinner').classList.toggle('hidden', !isSubmitting);
+        }
+        
+        // --- Lógica de la Firma (Canvas) ---
+
+        function draw(e) {
+            if (!isDrawing) return;
+            
+            // Obtener coordenadas relativas al canvas
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.clientX || e.touches[0].clientX;
+            const clientY = e.clientY || e.touches[0].clientY;
+            
+            const x = (clientX - rect.left) * (canvas.width / rect.width);
+            const y = (clientY - rect.top) * (canvas.height / rect.height);
+            
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            [lastX, lastY] = [x, y];
+        }
+
+        function startDrawing(e) {
+            isDrawing = true;
+            // Previene el desplazamiento táctil
+            e.preventDefault(); 
+            
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.clientX || e.touches[0].clientX;
+            const clientY = e.clientY || e.touches[0].clientY;
+            
+            lastX = (clientX - rect.left) * (canvas.width / rect.width);
+            lastY = (clientY - rect.top) * (canvas.height / rect.height);
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+        }
+
+        // Eventos de ratón y táctiles
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        canvas.addEventListener('touchstart', startDrawing);
+        canvas.addEventListener('touchmove', draw);
+        canvas.addEventListener('touchend', stopDrawing);
+
+        clearButton.addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#f9f9fb';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        });
+
+        function isCanvasBlank() {
+            const pixelBuffer = new Uint32Array(
+                ctx.getImageData(0, 0, canvas.width, canvas.height).data.buffer
+            );
+            // Revisa si todos los píxeles son del color de fondo (#f9f9fb)
+            // Color de fondo RGB(249, 249, 251) o ARGB 4292150907
+            // La constante de color 4292150907 representa el color de fondo en ARGB (Alpha-Red-Green-Blue)
+            // Usamos una comparación para ver si hay algún píxel diferente al fondo.
+            return !pixelBuffer.some(color => color !== 4292150907); 
+        }
+
+        // --- Manejo del Formulario ---
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            pdfDownloadArea.classList.add('hidden');
+            
+            if (isCanvasBlank()) {
+                showMessage("Por favor, el odontólogo docente debe ingresar su firma digital.", 'error');
+                return;
+            }
+
+            setSubmitting(true);
+            showMessage("Enviando datos y generando PDF... Por favor, espere.", 'info');
+
+            const formData = new FormData(form);
+            const payload = {};
+            formData.forEach((value, key) => {
+                payload[key] = value;
+            });
+
+            // Convertir la firma a Base64
+            payload.signatureBase64 = canvas.toDataURL('image/png');
+
+            try {
+                const response = await fetch(GOOGLE_APP_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    showMessage("¡Registro completado! Descargue su comprobante.", 'success');
+                    
+                    // Manejo de la descarga del PDF
+                    const pdfData = result.pdfData;
+                    const pdfFileName = result.pdfFileName;
+                    
+                    // Función para convertir Base64 a ArrayBuffer (necesario para Blob)
+                    function base64ToBlob(base64, mimeType) {
+                        const byteCharacters = atob(base64);
+                        const byteNumbers = new Array(byteCharacters.length);
+                        for (let i = 0; i < byteCharacters.length; i++) {
+                            byteNumbers[i] = byteCharacters.charCodeAt(i);
+                        }
+                        const byteArray = new Uint8Array(byteNumbers);
+                        return new Blob([byteArray], { type: mimeType });
+                    }
+
+                    const pdfBlob = base64ToBlob(pdfData, 'application/pdf');
+                    
+                    // Crear URL para descarga
+                    const pdfUrl = URL.createObjectURL(pdfBlob);
+                    
+                    downloadLink.href = pdfUrl;
+                    downloadLink.download = pdfFileName;
+                    
+                    pdfDownloadArea.classList.remove('hidden');
+                    form.reset();
+                    clearButton.click(); // Limpiar la firma
+                    document.getElementById('date').value = new Date().toISOString().split('T')[0]; // Resetear fecha
+
+                } else {
+                    showMessage(`Error en el backend: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showMessage(`Error de conexión o red: ${error.message}`, 'error');
+            } finally {
+                setSubmitting(false);
+            }
+        });
+    </script>
+</body>
+</html>
