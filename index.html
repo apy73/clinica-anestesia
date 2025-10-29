@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div>
+<label for="grupo" class="block text-sm font-medium text-slate-700">Grupo</label>
+<input id="grupo" type="text" required placeholder="5°A, 601..." class="mt-1 w-full rounded-xl border-slate-300 focus:border-teal-600 focus:ring-teal-600" />
+</div>
+<div>
+<label for="tecnica" class="block text-sm font-medium text-slate-700">Técnica específica</label>
+<select id="tecnica" required class="mt-1 w-full rounded-xl border-slate-300 focus:border-teal-600 focus:ring-teal-600">
+<option value="" disabled selected>Selecciona…</option>
+<option>Supraperióstica</option>
+<option>Alveolar inferior</option>
+<option>Mentoniana</option>
+<option>Alveolar Postero Superior</option>
+<option>Naso Palatina</option>
+<option>Palatina Posterior</option>
+</select>
+</div>
+<div>
+<label for="farmaco" class="block text-sm font-medium text-slate-700">Fármaco(s)</label>
+<input id="farmaco" type="text" required placeholder="Lidocaína 2% con Epi 1:100,000" class="mt-1 w-full rounded-xl border-slate-300 focus:border-teal-600 focus:ring-teal-600" />
+</div>
+</div>
+
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div>
+<label for="paPre" class="block text-sm font-medium text-slate-700">Presión arterial (Pre)</label>
+<input id="paPre" type="text" required placeholder="120/80 mmHg" class="mt-1 w-full rounded-xl border-slate-300 focus:border-teal-600 focus:ring-teal-600" />
+</div>
+<div>
+<label for="paPost" class="block text-sm font-medium text-slate-700">Presión arterial (Post)</label>
+<input id="paPost" type="text" required placeholder="115/75 mmHg" class="mt-1 w-full rounded-xl border-slate-300 focus:border-teal-600 focus:ring-teal-600" />
+</div>
+</div>
+
+
+<div>
+<label for="comentarios" class="block text-sm font-medium text-slate-700">Comentarios adicionales (opcional)</label>
+<textarea id="comentarios" rows="3" class="mt-1 w-full rounded-xl border-slate-300 focus:border-teal-600 focus:ring-teal-600"></textarea>
+</div>
+
+
+<div class="space-y-2">
+<div class="flex items-center justify-between">
+<label class="text-sm font-medium text-slate-700">Firma digital (obligatoria)</label>
+<button type="button" id="btnBorrar" class="text-sm px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-100">Borrar firma</button>
+</div>
+<div class="bg-slate-100 rounded-xl border border-slate-300 p-2">
+<canvas id="signaturePad" class="w-full h-48 bg-white rounded-lg"></canvas>
+</div>
+<p class="text-xs text-slate-500">Firma con mouse, stylus o dedo.</p>
+</div>
+
+
+<div class="flex flex-col sm:flex-row gap-3 sm:items-center">
+<button id="btnEnviar" type="submit" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-teal-600 text-white hover:bg-teal-700 disabled:opacity-50">
+<span>Registrar y generar PDF</span>
+</button>
+<a id="btnDescarga" href="#" download class="hidden px-5 py-2.5 rounded-xl border border-teal-600 text-teal-700 hover:bg-teal-50">Descargar PDF</a>
+<span id="status" class="text-sm text-slate-500"></span>
+</div>
+</form>
+</main>
+
+
+<footer class="max-w-4xl mx-auto p-6 text-xs text-slate-400">
+© Arte Dental y Ortodoncia • APY — Sistema educativo digital sin servidores.
+</footer>
+</body>
+</html>
